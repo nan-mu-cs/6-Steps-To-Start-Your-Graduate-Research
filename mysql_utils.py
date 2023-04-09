@@ -28,7 +28,7 @@ def get_popular_keywords(year, number):
 def get_top_professors_for_keyword(keyword):
     with mysql_db.cursor() as cursor, mutex:
         sql = '''
-        SELECT F.name, F.phone, F.email, F.photo_url 
+        SELECT DISTINCT F.name, F.phone, F.email, F.photo_url 
         FROM (
             SELECT A.name,A.id,SUM(score * num_citations)KRC, A.email, A.phone, A.photo_url
             FROM faculty AS A JOIN (

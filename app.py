@@ -33,21 +33,41 @@ app.layout = html.Div([
             #input component
             dcc.Input(id="interest_keyword", type="text", placeholder="keyword", value="data mining"),
             #university chart component
-            html.Div(id="best-related-universities")
+            dash_table.DataTable(id="best-related-universities", columns=[
+                {"id": "photo", "name": "photo", "presentation": "markdown"},
+                {"id": "name", "name": "name"}],
+                style_cell_conditional=[{"if": {"column_id": "photo"}, "width": "50px"},]
+                )
+            # html.Div(id="best-related-universities")
         ], id="widget-3"),
 
         html.Div([
             #input component
             dcc.Input(id="keyword_professor", type="text", placeholder="keyword", value="data mining"),
             #professor chart component
-            html.Div(id="best-related-professors")
+            dash_table.DataTable(id="best-related-professors", columns=[
+                {"id": "photo", "name": "photo", "presentation": "markdown"},
+                {"id": "name", "name": "name"},
+                {"id": "phone", "name": "phone"},
+                {"id": "email", "name": "email"}
+                ],
+                style_cell_conditional=[{"if": {"column_id": "photo"}, "width": "50px"},]
+                )
+            # html.Div(id="best-related-professors")
         ], id="widget-4"),
 
         html.Div([
             #input component
             dcc.Input(id="keyword_publications", type="text", placeholder="keyword", value="data mining"),
             #publications chart component
-            html.Div(id="best-related-publications")
+            # html.Div(id="best-related-publications")
+            dash_table.DataTable(id="best-related-publications", columns=[
+                {"id": "title", "name": "title"},
+                {"id": "venue", "name": "venue"},
+                {"id": "year", "name": "year"},
+                {"id": "num_citations", "name": "num_citations"}
+                ]
+                )
         ], id="widget-5")
     ]),
 
@@ -90,48 +110,50 @@ def get_keyword_trend(value):
     return px.line(dff, x='YEAR', y='PUBLICATIONS')
 
 @callback(
-    Output('best-related-universities', "children"),
+    Output('best-related-universities', "data"),
     Input('interest_keyword', 'value')
 )
 def get_top_university_for_keyword(value):
     result = mongo_utils.get_top_university_for_keyword(value)
-    child = []
+    data = []
     for university in result:
-        child.append(
-        html.Div([
-            html.H4(university['_id']['name']),
-            html.Img(src=university['_id']['photo'], height=100)
-        ], className=""))
-    return child
+        data.append({
+            "name": university['_id']['name'],
+            "photo": "![]({photo}#u-photo)".format(photo=university['_id']['photo'])
+        })
+    return data
 
 @callback(
-    Output('best-related-professors', "children"),
+    Output('best-related-professors', "data"),
     Input('keyword_professor', 'value')
 )
 def get_top_professors_for_keyword(value):
     result = mysql_utils.get_top_professors_for_keyword(value)
-    child=[]
+    data=[]
     for professor in result:
-        child.append(
-            html.Div([
-                html.P(professor[0]),html.P(professor[1]),html.P(professor[2]),
-                html.Img(src=professor[3], height=100)
-            ], className=""))
-    return child
+        data.append({
+            "name": professor[0],
+            "phone": professor[1],
+            "email": professor[2],
+            "photo": "![]({photo}#u-photo)".format(photo=professor[3])
+        })
+    return data
 
 @callback(
-    Output('best-related-publications', "children"),
+    Output('best-related-publications', "data"),
     Input('keyword_publications', 'value')
 )
 def get_top_s_for_keyword(value):
     result = mysql_utils.get_top_s_for_keyword(value)
-    child=[]
+    data = []
     for publication in result:
-        child.append(
-            html.Div([
-                html.P(publication[0]),html.P(publication[1]),html.P(publication[2]),html.P(publication[3],),
-            ], className=""))
-    return child    
+        data.append({
+            "title": publication[0],
+            "venue": publication[1],
+            "year": publication[2],
+            "num_citations": publication[3]
+        })
+    return data    
 
 
 if __name__ == '__main__':

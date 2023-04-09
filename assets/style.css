@@ -1,0 +1,4 @@
+img[src*="#u-photo"] {
+    width:200px;
+    height:100px;
+ }
