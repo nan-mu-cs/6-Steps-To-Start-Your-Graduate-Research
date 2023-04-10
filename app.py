@@ -2,6 +2,7 @@ from dash import Dash, html, dcc, callback, Output, Input, State, dash_table
 import plotly.express as px
 import pandas as pd
 from bson.objectid import ObjectId
+import pymysql
 import mysql_utils
 import mongo_utils
 
@@ -167,10 +168,15 @@ def get_top_s_for_keyword(value):
 def save_professors(n_clicks, data):
     output = html.Plaintext("The data has been saved to your Mysql database.",
                             style={'color': 'green', 'font-weight': 'bold', 'font-size': 'large'})
+    update_mysql_failed_check_constraint = html.Plaintext("Failed to sync with MySql because of MySql Constraint Check Failed.",
+                            style={'color': 'red', 'font-weight': 'bold', 'font-size': 'large'})
     no_output = html.Plaintext("", style={'margin': "0px"})
     if n_clicks > 0:
-        mysql_utils.save_professors(data)
-        return output
+        try:
+            mysql_utils.save_professors(data)
+            return output
+        except pymysql.err.OperationalError:
+            return update_mysql_failed_check_constraint
     else:
         return no_output
     
