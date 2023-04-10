@@ -5,3 +5,8 @@ img[src*="#u-photo"] {
  img[src*="#p-photo"] {
     width:200px;
  }
+
+ body {
+    margin-left: 40px;
+    margin-right: 40px;
+ }

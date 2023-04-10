@@ -5,34 +5,51 @@ from bson.objectid import ObjectId
 import pymysql
 import mysql_utils
 import mongo_utils
+import dash_bootstrap_components as dbc
 
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-app = Dash(__name__, external_stylesheets=external_stylesheets)
+app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.layout = html.Div([
     html.H1('Nannan Website', style={'textAlign':'center'}),
     html.Div([
     
         html.Div([
-            #input component
-            dcc.Input(id="trending_year", type="number", placeholder="year", value="2012"),
-            #input component
-            dcc.Input(id="trending_number", type="number", placeholder="amount", value="10"),
+            dbc.Row([
+                dbc.Col([
+                    dbc.Label("Trending Year"),
+                    dbc.Input(id="trending_year", type="number", placeholder="year", value="2012"),            
+                ], width=6),
+                dbc.Col([
+                    dbc.Label("Top N Trending Keywords"),
+                    dcc.Slider(id="trending_number", min=1, max=20, step=1, value=10),     
+                ], width=6),
+            ]),
+            # dbc.Input(id="trending_number", type="number", placeholder="amount", value="10"),
             #trend chart component
             dcc.Graph(id="popular_keywords")
         ], id="widget-1"),
 
         html.Div([
-            #input component
-            dcc.Input(id="trend_keyword", type="text", placeholder="keyword", value="data mining"),
+            dbc.Row([
+                dbc.Label("Keyword", width="auto"),
+                dbc.Col([
+                    dbc.Input(id="trend_keyword", type="text", placeholder="keyword", value="data mining"),
+                ], width=3)
+            ]),
             #trend chart component
             dcc.Graph(id="keyword-trend-chart")
         ], id="widget-2"),
 
         html.Div([
             #input component
-            dcc.Input(id="interest_keyword", type="text", placeholder="keyword", value="data mining"),
+            dbc.Row([
+                dbc.Label("Keyword", width="auto"),
+                dbc.Col([
+                    dbc.Input(id="interest_keyword", type="text", placeholder="keyword", value="data mining"),
+                ], width=3)
+            ]),
             #university chart component
             dash_table.DataTable(id="best-related-universities", columns=[
                 {"id": "photo", "name": "photo", "presentation": "markdown"},
@@ -44,8 +61,15 @@ app.layout = html.Div([
 
         html.Div([
             #input component
-            dcc.Input(id="keyword_professor", type="text", placeholder="keyword", value="data mining"),
-            html.Button('Sync Professor Updates', id='save_to_faculty', n_clicks=0),
+            dbc.Row([
+                dbc.Label("Keyword", width="auto"),
+                dbc.Col([
+                    dbc.Input(id="keyword_professor", type="text", placeholder="keyword", value="data mining"),
+                ], width=3),
+                dbc.Col([
+                    dbc.Button('Sync Professor Updates', id='save_to_faculty', n_clicks=0),
+                ], width=3),
+            ]),
             html.Div(id='sync_professor_placeholder', children=[]),
             #professor chart component
             dash_table.DataTable(id="best-related-professors", columns=[
@@ -53,7 +77,7 @@ app.layout = html.Div([
                 {"id": "name", "name": "name"},
                 {"id": "phone", "name": "phone", "editable": True},
                 {"id": "email", "name": "email", "editable": True},
-                {"id": "faculty_id", "name": "faculty_id", "hideable": True}
+                {"id": "faculty_id", "name": "faculty_id"}
                 ],
                 style_cell_conditional=[{"if": {"column_id": "photo"}, "width": "50px"},]
                 )
@@ -62,7 +86,12 @@ app.layout = html.Div([
 
         html.Div([
             #input component
-            dcc.Input(id="keyword_publications", type="text", placeholder="keyword", value="data mining"),
+            dbc.Row([
+                dbc.Label("Keyword", width="auto"),
+                dbc.Col([
+                    dbc.Input(id="keyword_publications", type="text", placeholder="keyword", value="data mining"),
+                ], width=3),
+            ]),
             #publications chart component
             # html.Div(id="best-related-publications")
             dash_table.DataTable(id="best-related-publications", columns=[
