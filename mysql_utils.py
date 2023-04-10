@@ -42,7 +42,7 @@ def get_top_professors_for_keyword(keyword):
 
 def get_top_s_for_keyword(keyword):
     with mysql_db.cursor() as cursor, mutex:
-        sql = '''SELECT A.title, A.venue,A.year, A.num_citations
+        sql = '''SELECT A.title, A.venue, A.year, A.num_citations, A.id
                 FROM publication AS A JOIN publication_keyword AS B ON A.id = B.publication_id 
                     JOIN keyword as C ON B.keyword_id = C.id 
                 WHERE C.name = '{keyword}' 
@@ -57,4 +57,15 @@ def save_professors(data):
             sql = """
             UPDATE faculty SET email = '{email}', phone = '{phone}' WHERE id = {faculty_id}
             """.format(email=professor["email"], phone=professor["phone"], faculty_id=professor["faculty_id"])
+            cursor.execute(sql)
+
+def save_publications(data):
+    with mysql_db.cursor() as cursor, mutex:
+        for publications in data:
+            sql = """
+            UPDATE publication SET title = "{title}", 
+                venue = "{venue}", year = "{year}", num_citations = {num_citations} 
+            WHERE id = {publications_id}
+            """.format(title=publications["title"], venue=publications["venue"], year=publications["year"], num_citations=publications["num_citations"],publications_id=publications["publication_id"])
+            print(sql)
             cursor.execute(sql)

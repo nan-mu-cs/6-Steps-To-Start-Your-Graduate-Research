@@ -91,14 +91,19 @@ app.layout = html.Div([
                 dbc.Col([
                     dbc.Input(id="keyword_publications", type="text", placeholder="keyword", value="data mining"),
                 ], width=3),
+                 dbc.Col([
+                    dbc.Button('Sync Publication Updates', id='save_to_publications', n_clicks=0),
+                ], width=3)
             ]),
+            html.Div(id='sync_publications_placeholder', children=[]),
             #publications chart component
             # html.Div(id="best-related-publications")
             dash_table.DataTable(id="best-related-publications", columns=[
                 {"id": "title", "name": "title"},
-                {"id": "venue", "name": "venue"},
-                {"id": "year", "name": "year"},
-                {"id": "num_citations", "name": "num_citations"}
+                {"id": "venue", "name": "venue","editable": True},
+                {"id": "year", "name": "year","editable": True},
+                {"id": "num_citations", "name": "num_citations","editable": True},
+                {"id": "publication_id", "name": "publication_id"}
                 ]
                 )
         ], id="widget-5")
@@ -185,7 +190,8 @@ def get_top_s_for_keyword(value):
             "title": publication[0],
             "venue": publication[1],
             "year": publication[2],
-            "num_citations": publication[3]
+            "num_citations": publication[3],
+            "publication_id":publication[4]
         })
     return data    
 
@@ -206,6 +212,21 @@ def save_professors(n_clicks, data):
             return output
         except pymysql.err.OperationalError:
             return update_mysql_failed_check_constraint
+    else:
+        return no_output
+    
+@callback(
+    Output('sync_publications_placeholder', 'children'),
+    Input('save_to_publications', "n_clicks"),
+    State('best-related-publications', 'data')
+)
+def save_publications(n_clicks, data):
+    output = html.Plaintext("The data has been saved to your Mysql database.",
+                            style={'color': 'green', 'font-weight': 'bold', 'font-size': 'large'})
+    no_output = html.Plaintext("", style={'margin': "0px"})
+    if n_clicks > 0:
+        mysql_utils.save_publications(data)
+        return output
     else:
         return no_output
     
