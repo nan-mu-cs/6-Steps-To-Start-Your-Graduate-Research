@@ -44,12 +44,15 @@ app.layout = html.Div([
         html.Div([
             #input component
             dcc.Input(id="keyword_professor", type="text", placeholder="keyword", value="data mining"),
+            html.Button('Sync Professor Updates', id='save_to_faculty', n_clicks=0),
+            html.Div(id='sync_professor_placeholder', children=[]),
             #professor chart component
             dash_table.DataTable(id="best-related-professors", columns=[
                 {"id": "photo", "name": "photo", "presentation": "markdown"},
                 {"id": "name", "name": "name"},
-                {"id": "phone", "name": "phone"},
-                {"id": "email", "name": "email"}
+                {"id": "phone", "name": "phone", "editable": True},
+                {"id": "email", "name": "email", "editable": True},
+                {"id": "faculty_id", "name": "faculty_id", "hideable": True}
                 ],
                 style_cell_conditional=[{"if": {"column_id": "photo"}, "width": "50px"},]
                 )
@@ -135,7 +138,8 @@ def get_top_professors_for_keyword(value):
             "name": professor[0],
             "phone": professor[1],
             "email": professor[2],
-            "photo": "![]({photo}#u-photo)".format(photo=professor[3])
+            "photo": "![]({photo}#p-photo)".format(photo=professor[3]),
+            "faculty_id": professor[4]
         })
     return data
 
@@ -154,6 +158,22 @@ def get_top_s_for_keyword(value):
             "num_citations": publication[3]
         })
     return data    
+
+@callback(
+    Output('sync_professor_placeholder', 'children'),
+    Input('save_to_faculty', "n_clicks"),
+    State('best-related-professors', 'data')
+)
+def save_professors(n_clicks, data):
+    output = html.Plaintext("The data has been saved to your Mysql database.",
+                            style={'color': 'green', 'font-weight': 'bold', 'font-size': 'large'})
+    no_output = html.Plaintext("", style={'margin': "0px"})
+    if n_clicks > 0:
+        mysql_utils.save_professors(data)
+        return output
+    else:
+        return no_output
+    
 
 
 if __name__ == '__main__':

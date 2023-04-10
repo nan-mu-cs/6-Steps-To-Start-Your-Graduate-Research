@@ -1,4 +1,7 @@
 img[src*="#u-photo"] {
     width:200px;
-    height:100px;
+ }
+
+ img[src*="#p-photo"] {
+    width:200px;
  }

@@ -9,3 +9,12 @@ ON C.id = D.keyword_id;
 
 
 CREATE INDEX keyword_name_idx ON keyword(name);
+
+
+UPDATE faculty SET  email = '' WHERE email IS NOT NULL AND email NOT LIKE '%@%' AND email != '';
+ALTER TABLE faculty
+ADD CHECK (email IS NULL OR email = '' OR email LIKE '%@%'  OR email LIKE '%at%');
+
+UPDATE faculty SET phone = '' WHERE phone IS NOT NULL AND phone LIKE '%@%' AND phone != '';
+ALTER TABLE faculty
+ADD CHECK (phone NOT LIKE '%@%');

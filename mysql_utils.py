@@ -28,7 +28,7 @@ def get_popular_keywords(year, number):
 def get_top_professors_for_keyword(keyword):
     with mysql_db.cursor() as cursor, mutex:
         sql = '''
-        SELECT DISTINCT F.name, F.phone, F.email, F.photo_url 
+        SELECT DISTINCT F.name, F.phone, F.email, F.photo_url, F.id
         FROM (
             SELECT A.name,A.id,SUM(score * num_citations)KRC, A.email, A.phone, A.photo_url
             FROM faculty AS A JOIN (
@@ -50,3 +50,11 @@ def get_top_s_for_keyword(keyword):
                 limit 10'''.format(keyword=keyword)
         cursor.execute(sql)
         return cursor.fetchall()
+
+def save_professors(data):
+    with mysql_db.cursor() as cursor, mutex:
+        for professor in data:
+            sql = """
+            UPDATE faculty SET email = '{email}', phone = '{phone}' WHERE id = {faculty_id}
+            """.format(email=professor["email"], phone=professor["phone"], faculty_id=professor["faculty_id"])
+            cursor.execute(sql)
