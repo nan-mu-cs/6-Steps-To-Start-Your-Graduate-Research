@@ -6,7 +6,7 @@ import pymysql
 import mysql_utils
 import mongo_utils
 import dash_bootstrap_components as dbc
-
+import neo4j_utils
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
@@ -47,7 +47,7 @@ app.layout = html.Div([
             dbc.Row([
                 dbc.Label("Keyword", width="auto"),
                 dbc.Col([
-                    dbc.Input(id="interest_keyword", type="text", placeholder="keyword", value="data mining"),
+                    dbc.Input(id="interest_keyword", type="text", placeholder="keyword", value="Introduction to Data Mining"),
                 ], width=3)
             ]),
             #university chart component
@@ -106,7 +106,23 @@ app.layout = html.Div([
                 {"id": "publication_id", "name": "publication_id"}
                 ]
                 )
-        ], id="widget-5")
+        ], id="widget-5"),
+
+        html.Div([
+            #input component
+            dbc.Row([
+                dbc.Label("Publication Title", width="auto"),
+                dbc.Col([
+                    dbc.Input(id="publication_title", type="text", placeholder="publication title", value="Introduction to Data Mining"),
+                ], width=3)
+            ]),
+            dash_table.DataTable(id="next-read-publications", columns=[
+                {"id": "title", "name": "title"},
+                {"id": "venue", "name": "venue"},
+                {"id": "year", "name": "year"},
+                ]
+                )
+        ], id="widget-6")
     ]),
 
 ])
@@ -230,6 +246,21 @@ def save_publications(n_clicks, data):
     else:
         return no_output
     
+
+@callback(
+    Output('next-read-publications', "data"),
+    Input('publication_title', 'value')
+)
+def get_related_publication(value):
+    result = neo4j_utils.get_related_publication(value)
+    data = []
+    for publication in result:
+        data.append({
+            "title": publication["title"],
+            "venue": publication["venue"],
+            "year": publication["year"],
+        })
+    return data    
 
 
 if __name__ == '__main__':
