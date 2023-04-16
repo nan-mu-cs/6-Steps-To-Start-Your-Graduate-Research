@@ -11,6 +11,3 @@ def get_related_publication(title):
         database_="academicworld",
     )
     return records
-
-# title = """Proceedings of the 2003 annual national conference on Digital government research"""
-# print(example(title))

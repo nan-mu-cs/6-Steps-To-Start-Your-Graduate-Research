@@ -5,11 +5,12 @@ from threading import Lock
 mutex = Lock()
 
 mysql_db = pymysql.connect(host='localhost',
-                user=MYSQL_CREDENTIAL['user'],
-                password=MYSQL_CREDENTIAL['password'],
-                database='academicworld',
-                charset='utf8mb4',
-                port=3306)
+                           user=MYSQL_CREDENTIAL['user'],
+                           password=MYSQL_CREDENTIAL['password'],
+                           database='academicworld',
+                           charset='utf8mb4',
+                           port=3306)
+
 
 def get_popular_keywords(year, number):
     with mysql_db.cursor() as cursor, mutex:
@@ -23,7 +24,7 @@ def get_popular_keywords(year, number):
         """.format(year=year, number=number)
         cursor.execute(sql)
         return cursor.fetchall()
-    
+
 
 def get_top_professors_for_keyword(keyword):
     with mysql_db.cursor() as cursor, mutex:
@@ -40,6 +41,7 @@ def get_top_professors_for_keyword(keyword):
         cursor.execute(sql)
         return cursor.fetchall()
 
+
 def get_top_s_for_keyword(keyword):
     with mysql_db.cursor() as cursor, mutex:
         sql = '''SELECT A.title, A.venue, A.year, A.num_citations, A.id
@@ -51,6 +53,7 @@ def get_top_s_for_keyword(keyword):
         cursor.execute(sql)
         return cursor.fetchall()
 
+
 def save_professors(data):
     with mysql_db.cursor() as cursor, mutex:
         for professor in data:
@@ -59,6 +62,7 @@ def save_professors(data):
             """.format(email=professor["email"], phone=professor["phone"], faculty_id=professor["faculty_id"])
             cursor.execute(sql)
 
+
 def save_publications(data):
     with mysql_db.cursor() as cursor, mutex:
         for publications in data:
@@ -66,6 +70,6 @@ def save_publications(data):
             UPDATE publication SET title = "{title}", 
                 venue = "{venue}", year = "{year}", num_citations = {num_citations} 
             WHERE id = {publications_id}
-            """.format(title=publications["title"], venue=publications["venue"], year=publications["year"], num_citations=publications["num_citations"],publications_id=publications["publication_id"])
+            """.format(title=publications["title"], venue=publications["venue"], year=publications["year"], num_citations=publications["num_citations"], publications_id=publications["publication_id"])
             print(sql)
             cursor.execute(sql)

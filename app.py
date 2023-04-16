@@ -13,123 +13,146 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.layout = html.Div([
-    html.H1('6 Steps To Start Your Graduate Research', style={'textAlign':'center'}),
+    html.H1('6 Steps To Start Your Graduate Research',
+            style={'textAlign': 'center'}),
     html.Div([
-    
+
         html.Div([
             html.H2('Step 1: See What\'s Trending Research Topics'),
             dbc.Row([
                 dbc.Col([
                     dbc.Label("Trending Year"),
-                    dbc.Input(id="trending_year", type="number", placeholder="year", value="2012"),            
+                    dbc.Input(id="trending_year", type="number",
+                              placeholder="year", value="2012"),
                 ], width=6),
                 dbc.Col([
                     dbc.Label("Top N Trending Keywords"),
-                    dcc.Slider(id="trending_number", min=1, max=20, step=1, value=10),     
+                    dcc.Slider(id="trending_number", min=1,
+                               max=20, step=1, value=10),
                 ], width=6),
             ]),
             # dbc.Input(id="trending_number", type="number", placeholder="amount", value="10"),
-            #trend chart component
+            # trend chart component
             dcc.Graph(id="popular_keywords")
         ], id="widget-1", className="widget"),
 
         html.Div([
-            html.H2('Step 2: See Number of Publications Over the Years For the Trending Topic'),
+            html.H2(
+                'Step 2: See Number of Publications Over the Years For the Trending Topic'),
             dbc.Row([
                 dbc.Label("Keyword", width="auto"),
                 dbc.Col([
-                    dbc.Input(id="trend_keyword", type="text", placeholder="keyword", value="data mining"),
+                    dbc.Input(id="trend_keyword", type="text",
+                              placeholder="keyword", value="data mining"),
                 ], width=3),
                 dbc.Col([
-                    dbc.Button("Search", id="trend_keyword_button", color="primary", className="me-1"),
+                    dbc.Button("Search", id="trend_keyword_button",
+                               color="primary", className="me-1"),
                 ], width=3)
             ], class_name="input-row"),
-            #trend chart component
+            # trend chart component
             dcc.Graph(id="keyword-trend-chart")
         ], id="widget-2", className="widget"),
 
         html.Div([
-            html.H2('Step 3: See Which Universities Have Faculities Most Activily Working on the Topic'),
-            #input component
+            html.H2(
+                'Step 3: See Which Universities Have Faculities Most Activily Working on the Topic'),
+            # input component
             dbc.Row([
                 dbc.Label("Keyword", width="auto"),
                 dbc.Col([
-                    dbc.Input(id="interest_keyword", type="text", placeholder="keyword", value="data mining"),
+                    dbc.Input(id="interest_keyword", type="text",
+                              placeholder="keyword", value="data mining"),
                 ], width=3),
                 dbc.Col([
-                    dbc.Button("Search", id="interest_keyword_button", color="primary", className="me-1"),
+                    dbc.Button("Search", id="interest_keyword_button",
+                               color="primary", className="me-1"),
                 ], width=3)
             ],  class_name="input-row"),
             dbc.Row(id="best-related-universities", justify="center"),
         ], id="widget-3", className="widget"),
 
         html.Div([
-            #input component
-            html.H2('Step 4: See Which Professors Are Most Activily Working on the Topic'),
+            # input component
+            html.H2(
+                'Step 4: See Which Professors Are Most Activily Working on the Topic'),
             dbc.Row([
                 dbc.Label("Keyword", width="auto"),
                 dbc.Col([
-                    dbc.Input(id="keyword_professor", type="text", placeholder="keyword", value="data mining"),
+                    dbc.Input(id="keyword_professor", type="text",
+                              placeholder="keyword", value="data mining"),
                 ], width=3),
                 dbc.Col([
-                    dbc.Button("Search", id="keyword_professor_button", color="primary", className="me-1"),
+                    dbc.Button("Search", id="keyword_professor_button",
+                               color="primary", className="me-1"),
                 ], width=1),
                 dbc.Col([
-                    dbc.Button('Sync Professor Updates', id='save_to_faculty', n_clicks=0, color="success"),
+                    dbc.Button('Sync Professor Updates',
+                               id='save_to_faculty', n_clicks=0, color="success"),
                 ], width=3),
             ],  class_name="input-row"),
             html.Div(id='sync_professor_placeholder', children=[]),
-            #professor chart component
+            # professor chart component
             dash_table.DataTable(id="best-related-professors", columns=[
                 {"id": "photo", "name": "photo", "presentation": "markdown"},
                 {"id": "name", "name": "name"},
                 {"id": "phone", "name": "phone", "editable": True},
                 {"id": "email", "name": "email", "editable": True},
                 {"id": "faculty_id", "name": "faculty_id"}
-                ],
-                style_cell_conditional=[{"if": {"column_id": "photo"}, "width": "50px"},]
-                )
-            # html.Div(id="best-related-professors")
+            ],
+                style_cell_conditional=[{"if": {"column_id": "photo"}, "width": "50px"},
+                                        {'if': {'column_id': 'faculty_id', },
+                                         'display': 'None', }
+                                        ]
+            )
         ], id="widget-4", className="widget"),
 
         html.Div([
-            #input component
+            # input component
             html.H2('Step 5: See Top Publications of the Topic'),
             dbc.Row([
                 dbc.Label("Keyword", width="auto"),
                 dbc.Col([
-                    dbc.Input(id="keyword_publications", type="text", placeholder="keyword", value="data mining"),
+                    dbc.Input(id="keyword_publications", type="text",
+                              placeholder="keyword", value="data mining"),
                 ], width=3),
                 dbc.Col([
-                    dbc.Button("Search", id="keyword_publications_button", color="primary", className="me-1"),
+                    dbc.Button("Search", id="keyword_publications_button",
+                               color="primary", className="me-1"),
                 ], width=1),
-                 dbc.Col([
-                    dbc.Button('Sync Publication Updates', id='save_to_publications', n_clicks=0, color="success"),
+                dbc.Col([
+                    dbc.Button('Sync Publication Updates',
+                               id='save_to_publications', n_clicks=0, color="success"),
                 ], width=3)
             ],  class_name="input-row"),
             html.Div(id='sync_publications_placeholder', children=[]),
-            #publications chart component
+            # publications chart component
             # html.Div(id="best-related-publications")
             dash_table.DataTable(id="best-related-publications", columns=[
                 {"id": "title", "name": "title"},
-                {"id": "venue", "name": "venue","editable": True},
-                {"id": "year", "name": "year","editable": True},
-                {"id": "num_citations", "name": "num_citations","editable": True},
+                {"id": "venue", "name": "venue", "editable": True},
+                {"id": "year", "name": "year", "editable": True},
+                {"id": "num_citations", "name": "num_citations", "editable": True},
                 {"id": "publication_id", "name": "publication_id"}
-                ]
-                )
+            ],
+                style_cell_conditional=[
+                {'if': {'column_id': 'publication_id', },
+                 'display': 'None', }]
+            )
         ], id="widget-5", className="widget"),
 
         html.Div([
-            #input component
+            # input component
             html.H2('Step 6: Read More Related Publications'),
             dbc.Row([
                 dbc.Label("Publication Title", width="auto"),
                 dbc.Col([
-                    dbc.Input(id="publication_title", type="text", placeholder="publication title", value="Mining of Massive Datasets"),
+                    dbc.Input(id="publication_title", type="text",
+                              placeholder="publication title", value="Mining of Massive Datasets"),
                 ], width=3),
                 dbc.Col([
-                    dbc.Button("Search", id="publication_title_button", color="primary", className="me-1"),
+                    dbc.Button("Search", id="publication_title_button",
+                               color="primary", className="me-1"),
                 ], width=3),
             ],  class_name="input-row"),
             dbc.ListGroup(id="next-read-publications")
@@ -156,7 +179,7 @@ def get_popular_keywords(year, number):
     Y = []
     for keys in result:
         X.append(keys[0])
-        Y.append(keys[1])        
+        Y.append(keys[1])
     return {
         'data': [
             {'x': X, 'y': Y, 'type': 'bar', 'name': 'POPULAR KEYWORDS'},
@@ -164,9 +187,7 @@ def get_popular_keywords(year, number):
         'layout': {
             'title': 'SEE WHAT IS TRENDING'
         }
-        }
-
-
+    }
 
 
 @callback(
@@ -178,10 +199,11 @@ def get_keyword_trend(value, n_clicks):
     if not value:
         return dash.no_update
     result = mongo_utils.get_keyword_trend(value)
-    
+
     dff = pd.DataFrame(result, columns=["_id", "pub_cnt"])
     dff = dff.rename(columns={"_id": "YEAR", "pub_cnt": "PUBLICATIONS"})
     return px.line(dff, x='YEAR', y='PUBLICATIONS')
+
 
 @callback(
     Output('best-related-universities', "children"),
@@ -200,9 +222,10 @@ def get_top_university_for_keyword(value, n_clicks):
             ),
             dbc.CardImg(src=university['_id']['photo'], bottom=True),
         ],
-        style={"width": "15rem", "margin-left": "2rem"},
+            style={"width": "15rem", "margin-left": "2rem"},
         ))
     return data
+
 
 @callback(
     Output('best-related-professors', "data"),
@@ -213,7 +236,7 @@ def get_top_professors_for_keyword(value, n_clicks):
     if not value:
         return dash.no_update
     result = mysql_utils.get_top_professors_for_keyword(value)
-    data=[]
+    data = []
     for professor in result:
         data.append({
             "name": professor[0],
@@ -223,6 +246,7 @@ def get_top_professors_for_keyword(value, n_clicks):
             "faculty_id": professor[4]
         })
     return data
+
 
 @callback(
     Output('best-related-publications', "data"),
@@ -240,9 +264,10 @@ def get_top_s_for_keyword(value, n_clicks):
             "venue": publication[1],
             "year": publication[2],
             "num_citations": publication[3],
-            "publication_id":publication[4]
+            "publication_id": publication[4]
         })
-    return data    
+    return data
+
 
 @callback(
     Output('sync_professor_placeholder', 'children'),
@@ -253,7 +278,7 @@ def save_professors(n_clicks, data):
     output = html.Plaintext("The data has been saved to your Mysql database.",
                             style={'color': 'green', 'font-weight': 'bold', 'font-size': 'large'})
     update_mysql_failed_check_constraint = html.Plaintext("Failed to sync with MySql because of MySql Constraint Check Failed.",
-                            style={'color': 'red', 'font-weight': 'bold', 'font-size': 'large'})
+                                                          style={'color': 'red', 'font-weight': 'bold', 'font-size': 'large'})
     no_output = html.Plaintext("", style={'margin': "0px"})
     if n_clicks > 0:
         try:
@@ -263,7 +288,8 @@ def save_professors(n_clicks, data):
             return update_mysql_failed_check_constraint
     else:
         return no_output
-    
+
+
 @callback(
     Output('sync_publications_placeholder', 'children'),
     Input('save_to_publications', "n_clicks"),
@@ -278,7 +304,7 @@ def save_publications(n_clicks, data):
         return output
     else:
         return no_output
-    
+
 
 @callback(
     Output('next-read-publications', "children"),
@@ -301,7 +327,7 @@ def get_related_publication(value, n_clicks):
         #     "venue": publication["venue"],
         #     "year": publication["year"],
         # })
-    return data    
+    return data
 
 
 if __name__ == '__main__':
