@@ -7,6 +7,18 @@ img[src*="#u-photo"] {
  }
 
  body {
-    margin-left: 40px;
-    margin-right: 40px;
+    margin: 40px;
  }
+
+.widget {
+    margin-top: 80px;
+}
+
+.card-img-bottom {
+    padding-bottom: 20px;
+}
+
+#best-related-universities {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}

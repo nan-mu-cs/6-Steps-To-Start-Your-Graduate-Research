@@ -7,15 +7,17 @@ import mysql_utils
 import mongo_utils
 import dash_bootstrap_components as dbc
 import neo4j_utils
+import dash
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 app = Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 app.layout = html.Div([
-    html.H1('Nannan Website', style={'textAlign':'center'}),
+    html.H1('6 Steps To Start Your Graduate Research', style={'textAlign':'center'}),
     html.Div([
     
         html.Div([
+            html.H2('Step 1: See What\'s Trending Research Topics'),
             dbc.Row([
                 dbc.Col([
                     dbc.Label("Trending Year"),
@@ -29,42 +31,48 @@ app.layout = html.Div([
             # dbc.Input(id="trending_number", type="number", placeholder="amount", value="10"),
             #trend chart component
             dcc.Graph(id="popular_keywords")
-        ], id="widget-1"),
+        ], id="widget-1", className="widget"),
 
         html.Div([
+            html.H2('Step 2: See Number of Publications Over the Years For the Trending Topic'),
             dbc.Row([
                 dbc.Label("Keyword", width="auto"),
                 dbc.Col([
                     dbc.Input(id="trend_keyword", type="text", placeholder="keyword", value="data mining"),
+                ], width=3),
+                dbc.Col([
+                    dbc.Button("Search", id="trend_keyword_button", color="primary", className="me-1"),
                 ], width=3)
             ]),
             #trend chart component
             dcc.Graph(id="keyword-trend-chart")
-        ], id="widget-2"),
+        ], id="widget-2", className="widget"),
 
         html.Div([
+            html.H2('Step 3: See Which Universities Have Faculities Most Activily Working on the Topic'),
             #input component
             dbc.Row([
                 dbc.Label("Keyword", width="auto"),
                 dbc.Col([
-                    dbc.Input(id="interest_keyword", type="text", placeholder="keyword", value="Introduction to Data Mining"),
+                    dbc.Input(id="interest_keyword", type="text", placeholder="keyword", value="data mining"),
+                ], width=3),
+                dbc.Col([
+                    dbc.Button("Search", id="interest_keyword_button", color="primary", className="me-1"),
                 ], width=3)
             ]),
-            #university chart component
-            dash_table.DataTable(id="best-related-universities", columns=[
-                {"id": "photo", "name": "photo", "presentation": "markdown"},
-                {"id": "name", "name": "name"}],
-                style_cell_conditional=[{"if": {"column_id": "photo"}, "width": "50px"},]
-                )
-            # html.Div(id="best-related-universities")
-        ], id="widget-3"),
+            dbc.Row(id="best-related-universities", justify="center"),
+        ], id="widget-3", className="widget"),
 
         html.Div([
             #input component
+            html.H2('Step 4: See Which Professors Are Most Activily Working on the Topic'),
             dbc.Row([
                 dbc.Label("Keyword", width="auto"),
                 dbc.Col([
                     dbc.Input(id="keyword_professor", type="text", placeholder="keyword", value="data mining"),
+                ], width=3),
+                dbc.Col([
+                    dbc.Button("Search", id="keyword_professor_button", color="primary", className="me-1"),
                 ], width=3),
                 dbc.Col([
                     dbc.Button('Sync Professor Updates', id='save_to_faculty', n_clicks=0),
@@ -86,10 +94,14 @@ app.layout = html.Div([
 
         html.Div([
             #input component
+            html.H2('Step 5: See Top Publications of the Topic'),
             dbc.Row([
                 dbc.Label("Keyword", width="auto"),
                 dbc.Col([
                     dbc.Input(id="keyword_publications", type="text", placeholder="keyword", value="data mining"),
+                ], width=3),
+                dbc.Col([
+                    dbc.Button("Search", id="keyword_publications_button", color="primary", className="me-1"),
                 ], width=3),
                  dbc.Col([
                     dbc.Button('Sync Publication Updates', id='save_to_publications', n_clicks=0),
@@ -110,11 +122,15 @@ app.layout = html.Div([
 
         html.Div([
             #input component
+            html.H2('Step 6: Read More Related Publications'),
             dbc.Row([
                 dbc.Label("Publication Title", width="auto"),
                 dbc.Col([
-                    dbc.Input(id="publication_title", type="text", placeholder="publication title", value="Introduction to Data Mining"),
-                ], width=3)
+                    dbc.Input(id="publication_title", type="text", placeholder="publication title", value="Mining of Massive Datasets"),
+                ], width=3),
+                dbc.Col([
+                    dbc.Button("Search", id="publication_title_button", color="primary", className="me-1"),
+                ], width=3),
             ]),
             dash_table.DataTable(id="next-read-publications", columns=[
                 {"id": "title", "name": "title"},
@@ -154,9 +170,12 @@ def get_popular_keywords(year, number):
 
 @callback(
     Output('keyword-trend-chart', "figure"),
-    Input('trend_keyword', 'value')
+    State('trend_keyword', 'value'),
+    Input('trend_keyword_button', 'n_clicks'),
 )
-def get_keyword_trend(value):
+def get_keyword_trend(value, n_clicks):
+    if not value:
+        return dash.no_update
     result = mongo_utils.get_keyword_trend(value)
     
     dff = pd.DataFrame(result, columns=["_id", "pub_cnt"])
@@ -164,24 +183,34 @@ def get_keyword_trend(value):
     return px.line(dff, x='YEAR', y='PUBLICATIONS')
 
 @callback(
-    Output('best-related-universities', "data"),
-    Input('interest_keyword', 'value')
+    Output('best-related-universities', "children"),
+    State('interest_keyword', 'value'),
+    Input('interest_keyword_button', 'n_clicks')
 )
-def get_top_university_for_keyword(value):
+def get_top_university_for_keyword(value, n_clicks):
+    if not value:
+        return dash.no_update
     result = mongo_utils.get_top_university_for_keyword(value)
     data = []
     for university in result:
-        data.append({
-            "name": university['_id']['name'],
-            "photo": "![]({photo}#u-photo)".format(photo=university['_id']['photo'])
-        })
+        data.append(dbc.Card([
+            dbc.CardBody(
+                html.P(university['_id']['name'], className="card-text")
+            ),
+            dbc.CardImg(src=university['_id']['photo'], bottom=True),
+        ],
+        style={"width": "15rem", "margin-left": "2rem"},
+        ))
     return data
 
 @callback(
     Output('best-related-professors', "data"),
-    Input('keyword_professor', 'value')
+    State('keyword_professor', 'value'),
+    Input('keyword_professor_button', 'n_clicks'),
 )
-def get_top_professors_for_keyword(value):
+def get_top_professors_for_keyword(value, n_clicks):
+    if not value:
+        return dash.no_update
     result = mysql_utils.get_top_professors_for_keyword(value)
     data=[]
     for professor in result:
@@ -196,9 +225,12 @@ def get_top_professors_for_keyword(value):
 
 @callback(
     Output('best-related-publications', "data"),
-    Input('keyword_publications', 'value')
+    State('keyword_publications', 'value'),
+    Input('keyword_publications_button', 'n_clicks'),
 )
-def get_top_s_for_keyword(value):
+def get_top_s_for_keyword(value, n_clicks):
+    if not value:
+        return dash.no_update
     result = mysql_utils.get_top_s_for_keyword(value)
     data = []
     for publication in result:
@@ -249,9 +281,12 @@ def save_publications(n_clicks, data):
 
 @callback(
     Output('next-read-publications', "data"),
-    Input('publication_title', 'value')
+    State('publication_title', 'value'),
+    Input('publication_title_button', 'n_clicks'),
 )
-def get_related_publication(value):
+def get_related_publication(value, n_clicks):
+    if not value:
+        return dash.no_update
     result = neo4j_utils.get_related_publication(value)
     data = []
     for publication in result:
