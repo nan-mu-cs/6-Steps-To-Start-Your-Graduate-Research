@@ -22,3 +22,12 @@ img[src*="#u-photo"] {
     margin-top: 20px;
     margin-bottom: 20px;
 }
+
+.input-row {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#best-related-publications {
+    overflow: scroll;
+}

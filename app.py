@@ -43,7 +43,7 @@ app.layout = html.Div([
                 dbc.Col([
                     dbc.Button("Search", id="trend_keyword_button", color="primary", className="me-1"),
                 ], width=3)
-            ]),
+            ], class_name="input-row"),
             #trend chart component
             dcc.Graph(id="keyword-trend-chart")
         ], id="widget-2", className="widget"),
@@ -59,7 +59,7 @@ app.layout = html.Div([
                 dbc.Col([
                     dbc.Button("Search", id="interest_keyword_button", color="primary", className="me-1"),
                 ], width=3)
-            ]),
+            ],  class_name="input-row"),
             dbc.Row(id="best-related-universities", justify="center"),
         ], id="widget-3", className="widget"),
 
@@ -73,11 +73,11 @@ app.layout = html.Div([
                 ], width=3),
                 dbc.Col([
                     dbc.Button("Search", id="keyword_professor_button", color="primary", className="me-1"),
-                ], width=3),
+                ], width=1),
                 dbc.Col([
-                    dbc.Button('Sync Professor Updates', id='save_to_faculty', n_clicks=0),
+                    dbc.Button('Sync Professor Updates', id='save_to_faculty', n_clicks=0, color="success"),
                 ], width=3),
-            ]),
+            ],  class_name="input-row"),
             html.Div(id='sync_professor_placeholder', children=[]),
             #professor chart component
             dash_table.DataTable(id="best-related-professors", columns=[
@@ -90,7 +90,7 @@ app.layout = html.Div([
                 style_cell_conditional=[{"if": {"column_id": "photo"}, "width": "50px"},]
                 )
             # html.Div(id="best-related-professors")
-        ], id="widget-4"),
+        ], id="widget-4", className="widget"),
 
         html.Div([
             #input component
@@ -102,11 +102,11 @@ app.layout = html.Div([
                 ], width=3),
                 dbc.Col([
                     dbc.Button("Search", id="keyword_publications_button", color="primary", className="me-1"),
-                ], width=3),
+                ], width=1),
                  dbc.Col([
-                    dbc.Button('Sync Publication Updates', id='save_to_publications', n_clicks=0),
+                    dbc.Button('Sync Publication Updates', id='save_to_publications', n_clicks=0, color="success"),
                 ], width=3)
-            ]),
+            ],  class_name="input-row"),
             html.Div(id='sync_publications_placeholder', children=[]),
             #publications chart component
             # html.Div(id="best-related-publications")
@@ -118,7 +118,7 @@ app.layout = html.Div([
                 {"id": "publication_id", "name": "publication_id"}
                 ]
                 )
-        ], id="widget-5"),
+        ], id="widget-5", className="widget"),
 
         html.Div([
             #input component
@@ -131,14 +131,15 @@ app.layout = html.Div([
                 dbc.Col([
                     dbc.Button("Search", id="publication_title_button", color="primary", className="me-1"),
                 ], width=3),
-            ]),
-            dash_table.DataTable(id="next-read-publications", columns=[
-                {"id": "title", "name": "title"},
-                {"id": "venue", "name": "venue"},
-                {"id": "year", "name": "year"},
-                ]
-                )
-        ], id="widget-6")
+            ],  class_name="input-row"),
+            dbc.ListGroup(id="next-read-publications")
+            # dash_table.DataTable(id="next-read-publications", columns=[
+            #     {"id": "title", "name": "title"},
+            #     {"id": "venue", "name": "venue"},
+            #     {"id": "year", "name": "year"},
+            #     ]
+            #     )
+        ], id="widget-6", className="widget")
     ]),
 
 ])
@@ -280,7 +281,7 @@ def save_publications(n_clicks, data):
     
 
 @callback(
-    Output('next-read-publications', "data"),
+    Output('next-read-publications', "children"),
     State('publication_title', 'value'),
     Input('publication_title_button', 'n_clicks'),
 )
@@ -288,13 +289,18 @@ def get_related_publication(value, n_clicks):
     if not value:
         return dash.no_update
     result = neo4j_utils.get_related_publication(value)
-    data = []
+    data = [
+        dbc.ListGroupItem("Related Publications", active=True),
+    ]
     for publication in result:
-        data.append({
-            "title": publication["title"],
-            "venue": publication["venue"],
-            "year": publication["year"],
-        })
+        data.append(
+            dbc.ListGroupItem(publication["title"])
+        )
+        # data.append({
+        #     "title": publication["title"],
+        #     "venue": publication["venue"],
+        #     "year": publication["year"],
+        # })
     return data    
 
 
