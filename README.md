@@ -32,9 +32,15 @@ python app.py
 ```
 
 ## Design
+Below is the architect of this project:
+![Architect Digram](./architect-digram.svg)
+
+It is typical web application with HTML, CSS and React used in frontend, python used as backend and connect to MySQL, Neo4j and MongoDB.
 
 ## Implementation
-![Architect Digram](./architect-digram.svg)
+Overall it is implemented through Dash framework. 
+Frontend, we used dash bootstrap components and customized CSS.
+We use pymysql to connect MySQL, pymongo to connect MongoDB and neo4j library to connect Neo4j database.
 
 ## Database Techniques
 
