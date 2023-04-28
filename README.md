@@ -33,6 +33,8 @@ python app.py
 
 ## Design
 Below is the architect of this project:
+
+
 ![Architect Digram](./architect-digram.svg)
 
 It is typical web application with HTML, CSS and React used in frontend, python used as backend and connect to MySQL, Neo4j and MongoDB.
