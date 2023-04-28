@@ -17,7 +17,7 @@ def get_popular_keywords(year, number):
         sql = """
             SELECT name, sum(num_publications) total 
             FROM trending_keywords 
-            WHERE year > {year} 
+            WHERE year >= {year} 
             GROUP BY name 
             ORDER BY total DESC 
             LIMIT {number};

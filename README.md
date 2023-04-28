@@ -2,7 +2,10 @@
 
 ## Purpose
 
+The topic of my project is 6 steps to start your graduate research. The goal is to provide some inspirations, directions and resources when students are starting their graduate research. 
+
 ## Demo
+[Video Demo Link in Illinois Media Space](https://mediaspace.illinois.edu/media/t/1_u67ydlmo)
 
 ## Installation
 We only used given dataset for MySQL, MongoDB and Neo4j database.
@@ -31,6 +34,7 @@ python app.py
 ## Design
 
 ## Implementation
+![Architect Digram](architect-digram.jpg)
 
 ## Database Techniques
 
