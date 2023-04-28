@@ -34,7 +34,7 @@ python app.py
 ## Design
 
 ## Implementation
-![Architect Digram](architect-digram.jpg)
+![Architect Digram](./architect-digram.jpg)
 
 ## Database Techniques
 
