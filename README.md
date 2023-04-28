@@ -80,8 +80,5 @@ We create 2 check constraints:
     ADD CHECK (phone NOT LIKE '%@%');
     ```
 
-
-## Extra-Credit Capabilities
-
 ## Contributions
 This project is done by Nan Mu (nanmu2@) myself. I spent ~40 hours for it.
